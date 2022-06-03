@@ -2,12 +2,20 @@
 
 class Passag
 {
-    
-    public static function select(){
-        $connPDO = new \PDO('mysql:host=localhost;dbname=roteirizacao', 'root', '');
 
-        $sql = 'SELECT * FROM passageiros2 ORDER BY passageiro ASC;';
-        $stmt = $connPDO->prepare($sql);
+    private $connPDO;
+
+    public function __construct(){
+        try{
+            $this->connPDO = new PDO('mysql:host=localhost;dbname=roteirizacao', 'root', '');
+        }catch(PDOException $e){
+            echo "Connection failed: " . $e->getMessage();
+        }
+    }
+    
+    public function select(){
+        $sql = 'SELECT * FROM passageiros ORDER BY name ASC;';
+        $stmt = $this->connPDO->prepare($sql);
         $stmt->execute();
 
         $dados = [];
@@ -24,11 +32,9 @@ class Passag
         }
     }
 
-     public static function insert($passageiro, $cep){
-        $connPDO = new \PDO('mysql:host=localhost;dbname=roteirizacao', 'root', '');
-
-        $sql = 'INSERT INTO passageiros2 VALUES("", "1", :passageiro, :cep);';
-        $stmt = $connPDO->prepare($sql);
+     public function insert($passageiro, $cep){
+        $sql = 'INSERT INTO passageiros VALUES("", :passageiro, :cep);';
+        $stmt = $this->connPDO->prepare($sql);
         $stmt->bindValue(':passageiro', $passageiro);
         $stmt->bindValue(':cep', $cep);
 
@@ -39,16 +45,10 @@ class Passag
         }
      }
 
-     public static function delete($id){
-        $ids = '';
-
-        for($i = 0; $i < count($id); $i++){
-            $ids .= $id[$i] . ',';
-        }
-        $ids = rtrim($ids, ",");
-        $connPDO = new \PDO('mysql:host=localhost;dbname=roteirizacao', 'root', '');
-        $sql = "DELETE FROM passageiros2 WHERE id_passag in ($ids);";
-        $stmt = $connPDO->prepare($sql);
+     public function delete($id){
+        
+        $sql = "DELETE FROM passageiros WHERE id = $id;";
+        $stmt = $this->connPDO->prepare($sql);
 
         if($stmt->execute()){
             return array("sucess" => "Passageiro deletado com sucesso!");
@@ -57,11 +57,10 @@ class Passag
         }
      }
 
-     public static function update($nome, $cep, $id){
-        $connPDO = new \PDO('mysql:host=localhost;dbname=roteirizacao', 'root', '');
+     public function update($nome, $cep, $id){
 
-        $sql = 'UPDATE passageiros2 SET passageiro = :nome, cep = :cep WHERE id_passag = :id';
-        $stmt = $connPDO->prepare($sql);
+        $sql = 'UPDATE passageiros SET name = :nome, cep = :cep WHERE id = :id';
+        $stmt = $this->connPDO->prepare($sql);
         $stmt->bindValue(':nome', $nome);
         $stmt->bindValue(':cep', $cep);
         $stmt->bindValue(':id', $id);

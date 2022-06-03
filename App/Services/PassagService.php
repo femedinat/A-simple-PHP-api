@@ -12,27 +12,21 @@ class PassagService
 
     public function post($passageiro = null, $cep = null){
         $Passag = new Passag;
-        $data = file_get_contents('php://input');
-        $response = json_decode($data, true);
         if($passageiro){
-            return $Passag->insert($response["passageiro"], $response["cep"]);
+            return $Passag->insert($_POST['name'], $_POST["cep"]);
         }
     }
 
-    public function update(){
+    public function put(){
         $Passag = new Passag;
-        $data = file_get_contents('php://input');
-        $response = json_decode($data, true);
-        return $Passag->update($response["nome"], $response["cep"], $response["id"]);
+        parse_str(file_get_contents("php://input"),$data);
+        return $Passag->update($data["name"], $data["cep"], $data["id"]);
     }
 
     public function delete($id = null){
         $Passag = new Passag;
-        $data = file_get_contents('php://input');;
-        $response = json_decode($data, true);
-        $arrayId = $response['id'];
-        
-        return $Passag->delete($arrayId);
+        parse_str(file_get_contents("php://input"),$data);
+        return $Passag->delete($data['id']);
         
     }
 }

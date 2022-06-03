@@ -5,10 +5,9 @@
     header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
     header('Content-Type: application/json');
 
-    require_once('App/Services/UserService.php');
     require_once('App/Services/PassagService.php');
 
-    if($_GET['url']){
+    if($_GET['url'] != null) {
         $url = explode('/', $_GET['url']);
 
         if($url[0] === 'api'){
@@ -26,5 +25,8 @@
                 exit;
             }
         }
+    } else {
+        echo json_encode(array('error' => 'Invalid URL'));
+        exit;
     }
     
